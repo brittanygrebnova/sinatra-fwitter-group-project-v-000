@@ -1,4 +1,5 @@
 require './config/environment'
+require 'rack-flash'
 
 class ApplicationController < Sinatra::Base
 
@@ -6,6 +7,8 @@ class ApplicationController < Sinatra::Base
     set :public_folder, 'public'
     set :views, 'app/views'
     enable :sessions
+    set :session_secret, "secret"
+    use Rack::Flash
   end
   
   get '/' do
@@ -17,6 +20,7 @@ class ApplicationController < Sinatra::Base
     if logged_in?
       redirect "/tweets"
     else
+      #binding.pry
       erb :signup
     end
   end
@@ -30,6 +34,8 @@ class ApplicationController < Sinatra::Base
       #binding.pry
       redirect "/tweets"
     else
+      flash[:message] = "Please fill out all fields."
+      #binding.pry
       redirect "/signup"
     end
   end
@@ -47,7 +53,7 @@ class ApplicationController < Sinatra::Base
     #binding.pry
     session[:user_id] = @user.id
     redirect "/tweets"
-    binding.pry
+    #binding.pry
   end
 
   get '/logout' do
